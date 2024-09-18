@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using NZWalks_API.CustomActionFilter;
 using NZWalks_API.Models.Domain;
 using NZWalks_API.Models.DTO;
 using NZWalks_API.Repository;
@@ -20,6 +21,7 @@ namespace NZWalks_API.Controllers
             _repository = repository;
         }
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDTO addWalkRequestDTO)
         {
             Walk walk = _mapper.Map<Walk>(addWalkRequestDTO);
@@ -45,6 +47,7 @@ namespace NZWalks_API.Controllers
             return Ok(_mapper.Map<WalkDTO>(walk));
         }
         [HttpPut("{id}")]
+        [ValidateModel]
         public async Task<IActionResult> UpdateByIdAsync([FromRoute] Guid id, [FromBody] UpdateWalkRequestDTO updateWalkRequestDTO)
         {
             Walk walk = _mapper.Map<Walk>(updateWalkRequestDTO);
@@ -52,14 +55,18 @@ namespace NZWalks_API.Controllers
 
             walk = await _repository.UpdateByIdAsync(id, walk);
 
-            if(walk == null) { return NotFound(); }
+            if (walk == null) { return NotFound(); }
 
             return Ok(_mapper.Map<WalkDTO>(walk));
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteByIdAsync([FromRoute] Guid id)
         {
-            return Ok(_mapper.Map<WalkDTO>(await _repository.DeleteByIdAsync(id)));
+            Walk walk = await _repository.DeleteByIdAsync(id);
+
+            if (walk == null) { return NotFound(); }
+
+            return Ok(_mapper.Map<WalkDTO>(walk));
         }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NZWalks_API.CustomActionFilter;
 using NZWalks_API.Data;
 using NZWalks_API.Models.Domain;
 using NZWalks_API.Models.DTO;
@@ -65,6 +66,7 @@ namespace NZWalks_API.Controllers
             return Ok(regionDTO);
         }
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody]AddRegionRequestDTO addregionDTO)
         {
             //DTO to Model
@@ -83,9 +85,11 @@ namespace NZWalks_API.Controllers
 
 
             //201 response instead of 200
-            return CreatedAtAction(nameof(GetById), new { id = region.Id},regionDTO);
+            return CreatedAtAction(nameof(GetById), new { id = region.Id }, regionDTO);
+
         }
         [HttpPut("{id}")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute]Guid id,[FromBody] UpdateRegionRequestDTO updateregionDTO)
         {
             //Map DTOs to Model
@@ -109,6 +113,7 @@ namespace NZWalks_API.Controllers
 
 
             return Ok(regionDTO);
+
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute]Guid id)
