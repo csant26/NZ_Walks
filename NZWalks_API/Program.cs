@@ -7,13 +7,21 @@ using NZWalks_API.Data;
 using NZWalks_API.Mappings;
 using NZWalks_API.Repository;
 using System.Text;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.FileProviders;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+var logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("Logs/NZWalks_Log.txt",rollingInterval:RollingInterval.Minute)
+    .MinimumLevel.Information()
+    .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 builder.Services.AddControllers();
 builder.Services.AddHttpContextAccessor();
