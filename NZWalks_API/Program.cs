@@ -9,6 +9,7 @@ using NZWalks_API.Repository;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
+using NZWalks_API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,16 +101,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     });
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    app.UseSwagger();   
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
 
+
 app.UseHttpsRedirection();
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

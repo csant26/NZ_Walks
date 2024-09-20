@@ -33,8 +33,6 @@ namespace NZWalks_API.Middlewares
                 };
 
                 await httpContext.Response.WriteAsJsonAsync(error);
-
-                throw;
             }
         }
     }
