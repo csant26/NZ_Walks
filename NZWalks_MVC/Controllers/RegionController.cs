@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NZWalks_MVC.Models;
 using NZWalks_MVC.Models.DTO;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 
@@ -68,6 +69,45 @@ namespace NZWalks_MVC.Controllers
             return View();
 
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var response = await client.GetFromJsonAsync <RegionDTO> (url+$"/{id.ToString()}");
+            if(response is not null)
+            {
+                return View(response);
+            }
+            
+            return View(null);
+        }
+       
+        [HttpPost]
+        public async Task<IActionResult> Edit(RegionDTO regionDTO)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Put,
+                RequestUri = new Uri($"{url}/{regionDTO.Id.ToString()}"),
+                Content = new StringContent(JsonSerializer.Serialize(regionDTO), Encoding.UTF8, "application/json")
+            };
+
+            var httpResponseMessage = await client.SendAsync(httpRequestMessage);
+            httpResponseMessage.EnsureSuccessStatusCode();
+            var response = await httpResponseMessage.Content.ReadFromJsonAsync<RegionDTO>();
+
+            if (response is not null)
+            {
+                return RedirectToAction("Edit", "Region");
+            }
+
+            return View();
+
+
+        }
+
 
     }
 }   
