@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NZWalks_MVC.Models;
 using NZWalks_MVC.Models.DTO;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 
