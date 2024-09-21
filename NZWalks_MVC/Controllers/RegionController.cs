@@ -108,6 +108,21 @@ namespace NZWalks_MVC.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(RegionDTO regionDTO)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var httpResponseMessage = await client.DeleteAsync(url + $"/{regionDTO.Id}");
+            httpResponseMessage.EnsureSuccessStatusCode();
+            var response = await httpResponseMessage.Content.ReadFromJsonAsync<RegionDTO>();
+
+            if (response is not null)
+            {
+                return RedirectToAction("Index", "Region");
+            }
+
+            return View("Edit");
+        }
 
     }
 }   
